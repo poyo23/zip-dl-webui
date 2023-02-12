@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 import zipfile
 import argparse
+from tqdm import tqdm
 
 def webui_print(s,end="\n"):
     print(f"[zip-dl-webui] {s}",end=end)
@@ -23,7 +24,7 @@ def donwload_images(no_grids):
     zip_path = os.path.join(main_dir,zipname)
 
     with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as z:
-        for f in output_data.all_files:
+        for f in tqdm(output_data.all_files,desc="zip"):
             z.write(filename=os.path.join(outputs_dir,f),arcname=f)
 
     return f"{datetime.utcnow().strftime('%Y/%m/%d %H:%M:%S')} : finish",zip_path
