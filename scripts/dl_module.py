@@ -35,4 +35,5 @@ def donwload_images(dl_grid_images):
     zip_path = os.path.join(main_dir,zipname)
     shutil.make_archive(zip_path, 'zip', root_dir=dl_src)
 
-    return f"Finish {time_str}",f"{zip_path}.zip"
+    return f"{datetime.utcnow().strftime('%Y/%m/%d %H:%M:%S')} : finish",f"{zip_path}.zip"
+
