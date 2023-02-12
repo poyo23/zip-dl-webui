@@ -1,39 +1,57 @@
 import os
-import shutil
 from datetime import datetime
+import zipfile
+import argparse
 
 def webui_print(s,end="\n"):
     print(f"[zip-dl-webui] {s}",end=end)
 
-def donwload_images(dl_grid_images):
+def donwload_images(dl_grid_images,no_grids):
     main_dir = os.path.dirname(__file__)
     webui_print(f"main_dir: {main_dir}")
     webui_print(f"pwd: {os.getcwd()}")
     outputs_dir = os.path.join(os.getcwd(),"outputs")
 
-    dl_src = outputs_dir
+    if no_grids:
+        output_data = search_directory(outputs_dir,"-grids")
+    else:
+        output_data = search_directory(outputs_dir)
 
-    if dl_grid_images and os.name == 'posix':
-        #
-        symbol_outputs=os.path.join(main_dir,"temp_outputs_for_dl")
-        os.makedirs(symbol_outputs,exist_ok=True)
-        # delete symlink if exist
-        _path_list = [os.path.join(symbol_outputs,f) for f in os.listdir(symbol_outputs)]
-        link_path_list = [p for p in _path_list if not os.path.islink(p)]
-        for lp in link_path_list:
-            os.unlink(lp)
-
-        # create symlink
-        for d in [f for f in os.listdir(outputs_dir) if not f.endswith("-grids")]:
-            src = os.path.join(outputs_dir,d)
-            dst = os.path.join(symbol_outputs,d)
-            os.symlink(src, dst)
-        dl_src = symbol_outputs
-
+    #
     time_str = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    zipname = f"outputs_{time_str}"
+    zipname = f"outputs_{time_str}.zip"
     zip_path = os.path.join(main_dir,zipname)
-    shutil.make_archive(zip_path, 'zip', root_dir=dl_src)
 
-    return f"{datetime.utcnow().strftime('%Y/%m/%d %H:%M:%S')} : finish",f"{zip_path}.zip"
+    with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as z:
+        for f in output_data.all_files:
+            z.write(filename=os.path.join(outputs_dir,f),arcname=f)
+
+    return f"{datetime.utcnow().strftime('%Y/%m/%d %H:%M:%S')} : finish",zip_path
+
+
+
+def search_directory(input_dir,exclude_directory=None):
+    dirs = [""]
+    searched_directories = []
+    all_files = []
+    pbar = tqdm(desc="file searching")
+    while len(dirs) > 0:
+        d = dirs.pop()
+        if exclude_directory is not None and d.endswith(exclude_directory):
+            continue
+        if ".ipynb_checkpoints" in d:
+            continue
+        searching_dir = os.path.join(input_dir,d)
+        searched_directories.append(d)
+        _l = [os.path.join(d,p) for p in os.listdir(searching_dir)]
+        dir_list = [p for p in _l if os.path.isdir(os.path.join(input_dir,p))]
+        file_list = [p for p in _l if os.path.isfile(os.path.join(input_dir,p))]
+
+        dirs += dir_list
+        all_files += file_list
+        pbar.update(1)
+    pbar.close()
+
+    return argparse.Namespace(files=all_files,sub_dirs=searched_directories)
+
 
