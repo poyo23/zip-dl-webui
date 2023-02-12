@@ -19,7 +19,7 @@ def donwload_images(no_grids):
         output_data = search_directory(outputs_dir)
 
     #
-    time_str = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+    time_str = datetime.now().strftime("%Y%m%d%H%M%S")
     zipname = f"outputs_{time_str}.zip"
     zip_path = os.path.join(main_dir,zipname)
 
@@ -27,7 +27,7 @@ def donwload_images(no_grids):
         for f in tqdm(output_data.files,desc="zip"):
             z.write(filename=os.path.join(outputs_dir,f),arcname=f)
 
-    return f"{datetime.utcnow().strftime('%Y/%m/%d %H:%M:%S')} : finish",zip_path
+    return f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} : finish",zip_path
 
 
 
