@@ -20,14 +20,23 @@ def donwload_images(no_grids):
 
     #
     time_str = datetime.now().strftime("%Y%m%d%H%M%S")
-    zipname = f"outputs_{time_str}.zip"
+
+    zipname = f"outputs.zip"
+    link_zip_name = f"outputs_{time_str}.zip"
     zip_path = os.path.join(main_dir,zipname)
+    link_zip_path = os.path.join(main_dir,link_zip_name)
 
     with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as z:
         for f in tqdm(output_data.files,desc="zip"):
             z.write(filename=os.path.join(outputs_dir,f),arcname=f)
 
     return f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} : finish",zip_path
+
+    # Use symbolic links.
+    # To avoid creating too many files in multiple runs.
+    os.symlink(zipname, link_zip_path)
+
+    return f"{datetime.now().strftime('%Y/%m/%d %H:%M:%S')} : finish",link_zip_path
 
 
 
