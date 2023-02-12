@@ -7,12 +7,13 @@ def dl_tab():
     with gr.Blocks() as main_block:
         with gr.Row():
             with gr.Column():
-                download_button = gr.Button(value="Download!!", variant="primary")
+                gr.HTML(value="The following button creates a zip file. The created file will appear on the right and can be downloaded by clicking on it. (Create Zip alone will not download)")
+                download_button = gr.Button(value="Create Zip!!", variant="primary")
                 gr.HTML(value="detail setting")
                 grid_images_chk = gr.Checkbox(label="Include grid images (Unix only)", value=False)
 
             with gr.Column():
-                output_zip = gr.File(label="outputs.zip")
+                output_zip = gr.File(label="zip file:")
                 output_html = gr.HTML(elem_id=f'output_text')
 
         download_button.click(
