@@ -6,7 +6,7 @@ import argparse
 def webui_print(s,end="\n"):
     print(f"[zip-dl-webui] {s}",end=end)
 
-def donwload_images(dl_grid_images,no_grids):
+def donwload_images(no_grids):
     main_dir = os.path.dirname(__file__)
     webui_print(f"main_dir: {main_dir}")
     webui_print(f"pwd: {os.getcwd()}")
