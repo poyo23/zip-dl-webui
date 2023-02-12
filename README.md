@@ -1,6 +1,6 @@
 # zip-dl-webui
 
-git clone https://github.com/poyo23/zip-dl-webui.git
+`git clone https://github.com/poyo23/zip-dl-webui.git`
 
 ## How to use
 
